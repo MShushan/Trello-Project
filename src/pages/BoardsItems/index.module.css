@@ -1,0 +1,44 @@
+.boards_item_content {
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 3em;
+}
+
+.boards_item_title {
+    font-family: 'Oxygen', sans-serif;
+    font-weight: 700;
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+
+.boards_item_content_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.boards_item_content_container_1_item {
+    background-color: #ffd7ba;
+    padding: 1em;
+    width: 25%;
+    margin: 0 1em;
+}
+
+.boards_item_content_container_1_item_1_item {
+    font-family: 'Oxygen', sans-serif;
+    margin-bottom: 1em;
+    font-weight: 700;
+}
+
+.boards_item_content_container_1_item_2_item {
+    display: flex;
+}
+
+.boards_item_content_container_1_item_2_item_1_item svg {
+    margin-right: .5em;
+}
+
+.boards_item_content_container_1_item_2_item_2_item,
+.boards_item_content_container_2_item {
+    font-family: 'Oxygen', sans-serif;
+}
