@@ -1,5 +1,5 @@
 .register_bg {
-    background-image: url('./images/1.svg'), url('./images/2.svg');
+    background-image: url('../images/1.svg'), url('../images/2.svg');
     background-repeat: no-repeat, no-repeat;
     background-attachment: fixed, fixed;
     background-size: 368px, 368px;
@@ -147,4 +147,8 @@
     margin: 0 3em;
     font-size: .3em;
     padding-bottom: .7em;
+}
+
+.register_content_4_item_1_item {
+    margin-bottom: 1em;
 }
