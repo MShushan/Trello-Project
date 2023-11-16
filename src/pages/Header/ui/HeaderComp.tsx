@@ -3,21 +3,21 @@ import styles from '../styles/index.module.css'
 import { Col, Dropdown, MenuProps, Row, Space } from 'antd'
 
 import { FaTrello, FaCircleUser } from "react-icons/fa6";
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { auth } from '../../../firebase';
 import { signOut } from 'firebase/auth';
+import Register from '../../Register';
 
 
-const Header: React.FC<OwnProps> = () => {
-
-    const navigate = useNavigate();
+const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
 
     const handleSignOut = () => {
 
         signOut(auth)
             .then(() => {
-                navigate('/')
+                localStorage.removeItem("user")
+                setLocalStorageHook(false)
             })
             .catch(error => console.log(error))
     }
@@ -74,4 +74,6 @@ const Header: React.FC<OwnProps> = () => {
 export default Header
 
 
-type OwnProps = {}
+type OwnProps = {
+    setLocalStorageHook: (type: boolean) => void
+}

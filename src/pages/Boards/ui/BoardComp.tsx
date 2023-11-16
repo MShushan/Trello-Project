@@ -3,7 +3,7 @@ import styles from '../styles/index.module.css'
 import { FaPen, FaUnlockKeyhole, FaUser, FaXmark } from 'react-icons/fa6'
 import { Col, Row, Select } from 'antd'
 import { NavLink } from 'react-router-dom'
-import Header from '../../Header'
+
 
 
 
@@ -39,7 +39,6 @@ const Boards: React.FC<OwnProps> = () => {
         <>
             <div className={styles.boards_content}>
 
-                <Header />
 
                 <div className={styles.boards_content_container}>
                     <div className={styles.boards_content_container_in_item_1}>

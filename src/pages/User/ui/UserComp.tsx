@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styles from '../styles/index.module.css'
-import Header from '../../Header'
+
 import { FaUser } from 'react-icons/fa6'
 import { Tabs, TabsProps } from 'antd'
 
@@ -72,10 +72,6 @@ const UserComp: React.FC<OwnProps> = () => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
 
-            debugger
-            console.log(auth)
-            console.log(currentUser)
-
             setUser(currentUser);
 
 
@@ -90,7 +86,7 @@ const UserComp: React.FC<OwnProps> = () => {
 
     return (
         <div className={styles.user_content}>
-            <Header />
+
 
             <div className={styles.user_content_container}>
 
@@ -99,18 +95,6 @@ const UserComp: React.FC<OwnProps> = () => {
                         ?
                         <div>
                             <div className={styles.user_content_1_item}>
-                                {/* <div className={styles.user_content_1_item_1_item}>
-                                        <FaUser />
-                                    </div>
-                                    <div className={styles.user_content_1_item_2_item}>
-                                        <div className={styles.user_content_1_item_2_item_1_item}>
-                                            Shushanik Mirzoyan
-                                        </div>
-                                        <div className={styles.user_content_1_item_2_item_2_item}>
-                                            @shushanikmirzoyan
-                                        </div>
-                                    </div> */
-                                }
                                 <div className={styles.user_content_1_item_1_item}>
                                     <img src={`${user.photoURL}`} />
                                 </div>

@@ -1,7 +1,8 @@
-import { Suspense, lazy, } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { Suspense, lazy, useEffect, useState, } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './AppStl.css';
 
+import Header from '../pages/Header';
 import { auth } from '../firebase';
 
 
@@ -14,19 +15,27 @@ const BoardsItems = lazy(() => import('../pages/BoardsItems'))
 
 function App() {
 
-    // const navigate = useNavigate()
+    const [localStorageHook, setLocalStorageHook] = useState<boolean>(false)
 
     return (
         <BrowserRouter>
             <Suspense fallback={<div>Loading...</div>}>
+
                 <div className="App">
 
                     {
-                        auth.currentUser === null
+                        localStorageHook
                             ?
-                            <Route path='/' element={<Registration />} />
-
+                            <Header setLocalStorageHook={setLocalStorageHook} />
                             :
+                            <Registration setLocalStorageHook={setLocalStorageHook} />
+                    }
+
+
+                    {
+                        localStorageHook
+                            ?
+
                             <Routes>
 
 
@@ -35,18 +44,24 @@ function App() {
 
                                 <Route path='/boards' element={<Boards />} />
 
-                                <Route path='/userPage' element={<UserComp />} />
-
+                                <Route path='/' element={<UserComp />} />
 
 
                             </Routes>
+                            :
+                            null
+
                     }
 
 
 
                 </div>
+
+
+
+
             </Suspense>
-        </BrowserRouter>
+        </BrowserRouter >
     );
 }
 

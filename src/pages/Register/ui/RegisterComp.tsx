@@ -2,14 +2,13 @@ import React, { useEffect } from 'react'
 import styles from '../styles/index.module.css'
 import { Input, Button } from 'antd'
 
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import { FaTrello, FaAtlassian, FaCircle } from "react-icons/fa6";
 
 import SignIn from '../../SignIn';
 
-const Register: React.FC<OwnProps> = () => {
-
+const Register: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
     return (
         <div className={styles.register_bg}>
@@ -49,10 +48,9 @@ const Register: React.FC<OwnProps> = () => {
 
                 <div className={styles.register_content_4_item}>
                     <Button type="primary">Log in</Button>
-
                 </div>
 
-                <SignIn />
+                <SignIn setLocalStorageHook={setLocalStorageHook} />
 
                 {/* hingerord mas */}
 
@@ -98,4 +96,7 @@ const Register: React.FC<OwnProps> = () => {
 
 export default Register
 
-type OwnProps = {}
+type OwnProps = {
+    setLocalStorageHook: (type: boolean) => void
+
+}

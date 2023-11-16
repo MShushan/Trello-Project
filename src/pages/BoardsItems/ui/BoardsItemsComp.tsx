@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from '../styles/index.module.css'
 import { FaPlus } from 'react-icons/fa6'
-import Header from '../../Header'
+
 
 
 const BoardsItems: React.FC<OwnProps> = () => {
@@ -26,7 +26,6 @@ const BoardsItems: React.FC<OwnProps> = () => {
     return (
         <div>
 
-            <Header />
 
             <div className={styles.boards_item_content}>
                 <div className={styles.boards_item_title}>
