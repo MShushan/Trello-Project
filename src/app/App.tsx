@@ -14,8 +14,17 @@ const BoardsItems = lazy(() => import('../pages/BoardsItems'))
 
 
 function App() {
-
+    
+    
     const [localStorageHook, setLocalStorageHook] = useState<boolean>(false)
+
+    useEffect(() => {
+        
+        if (localStorage.getItem('user')) {
+            setLocalStorageHook(true)
+        }
+    }, [localStorageHook])
+
 
     return (
         <BrowserRouter>

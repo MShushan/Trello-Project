@@ -74,13 +74,10 @@ const UserComp: React.FC<OwnProps> = () => {
 
             setUser(currentUser);
 
-
         })
 
         return unsubscribe
     }, [])
-
-
 
 
 

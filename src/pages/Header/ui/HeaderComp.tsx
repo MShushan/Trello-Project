@@ -16,6 +16,7 @@ const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
         signOut(auth)
             .then(() => {
+
                 localStorage.removeItem("user")
                 setLocalStorageHook(false)
             })
