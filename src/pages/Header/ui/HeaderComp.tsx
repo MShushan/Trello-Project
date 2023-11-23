@@ -25,7 +25,7 @@ const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
     const items: MenuProps['items'] = [
         {
-            label: <NavLink to='/userPage'>Profile and visibility</NavLink>,
+            label: <NavLink to='/'>Profile and visibility</NavLink>,
             key: '0',
         },
         {
@@ -42,7 +42,7 @@ const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
         <div className={styles.header_content}>
             <Row>
                 <Col span={12} className={styles.header_content_first_col}>
-                    <NavLink to='/userPage'>
+                    <NavLink to='/'>
                         <div className={styles.header_content_first_col_1_item}>
                             <div className={styles.header_content_first_col_1_item_1_item}>
                                 <FaTrello />

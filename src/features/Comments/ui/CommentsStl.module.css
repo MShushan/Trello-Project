@@ -1,0 +1,10 @@
+.comment_modal_part{
+    transform: translate(-50%,-50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    padding: 1em;
+    width: 65%;
+    height: 60%;
+}
