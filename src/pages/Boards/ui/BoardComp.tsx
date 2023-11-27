@@ -3,12 +3,18 @@ import styles from '../styles/index.module.css'
 import { FaPen, FaUnlockKeyhole, FaUser, FaXmark } from 'react-icons/fa6'
 import { Col, Row, Select } from 'antd'
 import { NavLink } from 'react-router-dom'
-
+import { useDispatch, useSelector } from 'react-redux'
+import { addProjectFunc, getCurrentProjectIndexFunc } from '../../../entities/BoardsR/BoardsReducer'
+import { AppStateType } from '../../../entities/Store/store'
 
 
 
 
 const Boards: React.FC<OwnProps> = () => {
+
+    const dispatch = useDispatch()
+
+    const allProjectsArr = useSelector((state: AppStateType) => state.boardsReducer.projectArr)
 
     const templateArr = [
         {
@@ -33,6 +39,14 @@ const Boards: React.FC<OwnProps> = () => {
         },
     ]
 
+    const [newProjectModal, setNewProjectModal] = useState<boolean>(false)
+
+    const [newProjectName, setNewProjectName] = useState<string>('')
+
+
+    const createNewProjectCompFunc = () => {
+        dispatch(addProjectFunc(newProjectName))
+    }
 
 
     return (
@@ -127,12 +141,19 @@ const Boards: React.FC<OwnProps> = () => {
 
                             <div className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item}>
                                 <div className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item_1_item}>
-                                    <NavLink to={'/currentBoard'}>
-                                        My Trello board
-                                    </NavLink>
+
+                                    {
+                                        allProjectsArr.map((val) => {
+                                            return (
+                                                <NavLink onClick={() => dispatch(getCurrentProjectIndexFunc(val.id))} to={`/currentBoard/${val.id}`} >
+                                                    {val.boardName}
+                                                </NavLink>
+                                            )
+                                        })
+                                    }
                                 </div>
 
-                                <div className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item_2_item}>
+                                <div onClick={() => setNewProjectModal(true)} className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item_2_item}>
                                     Create new board
                                 </div>
                             </div>
@@ -142,6 +163,25 @@ const Boards: React.FC<OwnProps> = () => {
                 </div>
 
             </div>
+            {
+                newProjectModal
+                    ?
+                    <div>
+                        <div onClick={() => setNewProjectModal(false)}>
+                            Close
+                        </div>
+                        <div onClick={() => {
+                            setNewProjectModal(false)
+                            createNewProjectCompFunc()
+                        }
+                        }>
+                            Create
+                        </div>
+                        <input onChange={(e) => setNewProjectName(e.target.value)} />
+                    </div>
+                    :
+                    null
+            }
 
 
         </>

@@ -13,8 +13,15 @@ const initialState: InitialStateType = {
 export const boardsItemsReducerSlice = createSlice({
     name: 'boardsItems',
     initialState,
-    reducers: {}
+    reducers: {
+        // changeIssueInnerIssueSummary(state: InitialStateType, action: PayloadAction<{ str: string, id: string }>) {
+
+
+        // },
+    }
 })
+
+
 
 
 export default boardsItemsReducerSlice.reducer

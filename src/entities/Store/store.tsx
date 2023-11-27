@@ -13,3 +13,6 @@ export const store = configureStore({
         userReducer: userReducerSlice
     }
 })
+
+type RootReducerType = typeof store.getState
+export type AppStateType = ReturnType<RootReducerType>

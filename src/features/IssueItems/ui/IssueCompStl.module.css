@@ -1,0 +1,25 @@
+
+.boards_item_content_container_item_content_container {
+    background-color: rgba(0, 0, 0, .6);
+    padding: 1em;
+    margin-bottom: 2em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.boards_item_content_container_item_content_text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.boards_item_content_container_item_content_text_1_item {
+    color: #ffd7ba;
+    padding-left: 1em;
+    cursor: pointer;
+}
+
+.boards_item_content_container_item_content_title {
+    font-family: 'Oxygen', sans-serif;
+    color: #ffd7ba;
+}

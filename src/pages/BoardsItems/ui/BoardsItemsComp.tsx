@@ -1,18 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styles from '../styles/index.module.css'
-import { FaComment, FaPencil, FaPlus } from 'react-icons/fa6'
-import { BoardArrType, ItemsInnerType, ItemsObjType } from '../../../app/App'
+import { useDispatch, useSelector } from 'react-redux'
+import { FaCheck, FaComment, FaPencil, FaPlus, FaXmark } from 'react-icons/fa6'
+// import { BoardArrType, ItemsInnerType, ItemsObjType } from 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import CommentsComp from '../../../features/Comments';
+import { v4 as uuidv4 } from 'uuid';
 
+import IssueInfo from '../../../features/Comments';
+import { BoardArrType, ItemsInnerType, ItemsObjType } from '../../../entities/BoardsR/BoardsReducerTs.interface';
+import { addBoardFunc, addIssueFunc } from '../../../entities/BoardsR/BoardsReducer';
+import IssueComp from '../../../features/IssueItems';
+import { useParams } from 'react-router-dom';
+import { AppStateType } from '../../../entities/Store/store';
 
 
 const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard }) => {
+
+
+    let activeId = useParams()
+    let activeIdNum = activeId.id
+
+    const currentProject = useSelector((state: AppStateType) => state.boardsReducer.projectArr[Number(activeIdNum)])
 
     const [isShowModal, setIsShowModal] = useState<boolean>(false)
 
 
     const [commentsArr, setCommentsArr] = useState<Array<ItemsInnerType>>([])
+    const [commentsItem, setCommentsItem] = useState<ItemsObjType | null>(null)
+
+    const [addCardHktp, setAddCardHktp] = useState<number | null>(null)
+    const [newCardVal, setnewCardVal] = useState<string>('')
+
+    const [addBoardValnwName, setAddBoardValnwName] = useState<string>('')
+
+    const [addBoardValCnt, setAddBoardValCnt] = useState<boolean>(false)
+
+
+    const [commentCurrentId, setCommentCurrentId] = useState<string>('')
+    const [commentCurrentBoardName, setCommentCurrentBoardName] = useState<string>('')
+
+    const [cuurentItem, setCuurentItem] = useState<ItemsObjType | null>(null)
+
+
+
+
+    const dispatch = useDispatch()
 
 
 
@@ -43,7 +75,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
         const newSourceCards: ItemsObjType[] = Array.from(sourceColumn?.items as ItemsObjType[])
 
 
-        const [removedCard] = newSourceCards.splice(source.index, 1);
+        let [removedCard] = newSourceCards.splice(source.index, 1);
 
         if (source.droppableId === destination.droppableId) {
 
@@ -62,7 +94,8 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
         } else {
 
             const newDestinationCards: ItemsObjType[] = Array.from(destinationColumn.items);
-            removedCard.boardName = destinationColumn.boardName
+            // removedCard.boardName = destinationColumn.boardName
+            removedCard = { ...removedCard, boardName: destinationColumn.boardName }
             newDestinationCards.splice(destination.index, 0, removedCard);
 
 
@@ -91,12 +124,17 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
 
 
+
     const changeCommentsFunc = (id: string, boardName: string) => {
         changeBoard.map((val) => {
             if (val.boardName === boardName) {
                 val.items.map((val1) => {
                     if (val1.id === id) {
                         setCommentsArr(val1.comments)
+                        setCommentsItem(val1)
+
+                        setCommentCurrentBoardName(boardName)
+                        setCommentCurrentId(id)
                     }
                 })
             }
@@ -105,7 +143,28 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
     }
 
 
+    useEffect(() => {
 
+        // debugger
+        changeCommentsFunc(commentCurrentId, commentCurrentBoardName)
+
+    }, [changeBoard])
+
+
+    const addCardCompFunc = (boardName: string) => {
+        let cardCloneObj: ItemsObjType = {
+            id: uuidv4(),
+            boardName: boardName,
+            title: newCardVal,
+            comments: []
+        }
+        dispatch(addIssueFunc(cardCloneObj))
+        setnewCardVal('')
+    }
+
+    const addBoardCompFunc = () => {
+        dispatch(addBoardFunc(addBoardValnwName))
+    }
 
 
     return (
@@ -115,7 +174,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                 <div>
                     <div className={styles.boards_item_content}>
                         <div className={styles.boards_item_title}>
-                            My Trello board
+                            {currentProject.boardName}
                         </div>
                         <div className={styles.boards_item_content_container}>
 
@@ -140,51 +199,50 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                                                                         {
                                                                             val.items.map((val1, ind) => {
                                                                                 return (
-                                                                                    <Draggable key={val1.id} draggableId={val1.id} index={ind}>
-                                                                                        {
-                                                                                            (provided) => {
-                                                                                                return (
-                                                                                                    <div
-                                                                                                        ref={provided.innerRef}
-                                                                                                        {...provided.draggableProps}
-                                                                                                        {...provided.dragHandleProps}
-                                                                                                        className='card'
-                                                                                                    >
-                                                                                                        <div className={styles.boards_item_content_container_item_content_container}>
-                                                                                                            <div className={styles.boards_item_content_container_item_content_title}>
-                                                                                                                {val1.title}
-                                                                                                            </div>
-                                                                                                            <div className={styles.boards_item_content_container_item_content_text}>
-                                                                                                                <div onClick={() => {
-                                                                                                                    changeCommentsFunc(val1.id, val1.boardName)
-                                                                                                                    setIsShowModal(true)
-                                                                                                                }
-                                                                                                                } className={styles.boards_item_content_container_item_content_text_1_item}>
-                                                                                                                    <FaComment />
-                                                                                                                </div>
-                                                                                                                <div className={styles.boards_item_content_container_item_content_text_1_item}>
-                                                                                                                    <FaPencil />
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                    </div>
-                                                                                                )
-                                                                                            }
-                                                                                        }
-                                                                                    </Draggable>
+                                                                                    <IssueComp
+                                                                                        setCuurentItem={setCuurentItem}
+                                                                                        val1={val1}
+                                                                                        ind={ind}
+                                                                                        changeCommentsFunc={changeCommentsFunc}
+                                                                                        setIsShowModal={setIsShowModal}
+                                                                                    />
                                                                                 )
                                                                             })
                                                                         }
                                                                     </div>
-                                                                    <div className={styles.boards_item_content_container_1_item_2_item}>
-                                                                        <div className={styles.boards_item_content_container_1_item_2_item_1_item}>
-                                                                            <FaPlus />
-                                                                        </div>
-                                                                        <div className={styles.boards_item_content_container_1_item_2_item_2_item}>
-                                                                            Add a card
-                                                                        </div>
-                                                                    </div>
+
+
+                                                                    {
+                                                                        addCardHktp === val.id
+                                                                            ?
+
+                                                                            <div>
+                                                                                <input type='text' onChange={(e) => setnewCardVal(e.target.value)} />
+                                                                                <div>
+                                                                                </div>
+                                                                                <div onClick={() => {
+                                                                                    setAddCardHktp(null)
+                                                                                    addCardCompFunc(val.boardName)
+                                                                                }} >
+                                                                                    <FaCheck />
+                                                                                </div>
+                                                                                <div onClick={() => setAddCardHktp(null)} >
+                                                                                    <FaXmark />
+                                                                                </div>
+                                                                            </div>
+
+                                                                            :
+                                                                            <div onClick={() => setAddCardHktp(val.id)} className={styles.boards_item_content_container_1_item_2_item} >
+                                                                                <div className={styles.boards_item_content_container_1_item_2_item_1_item}>
+                                                                                    <FaPlus />
+                                                                                </div>
+                                                                                <div className={styles.boards_item_content_container_1_item_2_item_2_item}>
+                                                                                    Add a card
+                                                                                </div>
+                                                                            </div>
+
+                                                                    }
+
                                                                 </div>
                                                             </div>
                                                         )
@@ -197,15 +255,35 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                             }
 
 
-
-                            <div className={styles.boards_item_content_container_2_item}>
-                                <div className={styles.boards_item_content_container_2_item_1_item}>
-                                    <FaPlus />
-                                </div>
-                                <div className={styles.boards_item_content_container_2_item_2_item}>
-                                    Add another list
-                                </div>
-                            </div>
+                            {
+                                addBoardValCnt
+                                    ?
+                                    <div>
+                                        <input type='text' onChange={(e) => setAddBoardValnwName(e.target.value)} />
+                                        <div>
+                                        </div>
+                                        <div onClick={() => {
+                                            // setAddCardHktp(null)
+                                            // addCardCompFunc(val.boardName)
+                                            setAddBoardValCnt(false)
+                                            addBoardCompFunc()
+                                        }} >
+                                            <FaCheck />
+                                        </div>
+                                        <div onClick={() => setAddBoardValCnt(false)} >
+                                            <FaXmark />
+                                        </div>
+                                    </div>
+                                    :
+                                    <div onClick={() => setAddBoardValCnt(true)} className={styles.boards_item_content_container_2_item}>
+                                        <div className={styles.boards_item_content_container_2_item_1_item}>
+                                            <FaPlus />
+                                        </div>
+                                        <div className={styles.boards_item_content_container_2_item_2_item}>
+                                            Add another list
+                                        </div>
+                                    </div>
+                            }
                         </div>
 
                     </div>
@@ -215,7 +293,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
             {
                 isShowModal
                     ?
-                    <CommentsComp setIsShowModal={setIsShowModal} commentsArr={commentsArr} />
+                    <IssueInfo commentCurrentBoardName={commentCurrentBoardName} commentsItem={commentsItem} setIsShowModal={setIsShowModal} commentsArr={commentsArr} />
                     :
                     null
             }
