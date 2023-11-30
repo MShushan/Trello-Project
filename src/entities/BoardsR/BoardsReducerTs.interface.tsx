@@ -1,12 +1,14 @@
 export interface InitialStateType {
     projectArr: Array<ProjectBoardArrType>,
-    currentProjectIndx: number,
+    currentProjectIndx: { num: string },
+    loading: boolean,
+    error: boolean
 }
 
 export interface ProjectBoardArrType {
     boardArr: Array<BoardArrType>,
     boardName: string,
-    id: number
+    id: string
 }
 
 
@@ -14,7 +16,8 @@ export interface ItemsObjType {
     id: string,
     title: string,
     comments: Array<ItemsInnerType>,
-    boardName: string
+    boardName: string,
+    description: string
 }
 
 

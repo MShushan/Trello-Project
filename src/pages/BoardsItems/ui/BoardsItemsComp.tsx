@@ -8,13 +8,35 @@ import { v4 as uuidv4 } from 'uuid';
 
 import IssueInfo from '../../../features/Comments';
 import { BoardArrType, ItemsInnerType, ItemsObjType } from '../../../entities/BoardsR/BoardsReducerTs.interface';
-import { addBoardFunc, addIssueFunc } from '../../../entities/BoardsR/BoardsReducer';
+import { addIssueAFunc, createBoard, deleteBoardItem, fetchPosts } from '../../../entities/BoardsR/BoardsReducer';
 import IssueComp from '../../../features/IssueItems';
 import { useParams } from 'react-router-dom';
-import { AppStateType } from '../../../entities/Store/store';
+import { AppStateType, useAppDispatch } from '../../../entities/Store/store';
 
 
 const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard }) => {
+
+    const [bv, setbv] = useState<Array<BoardArrType>>([])
+
+    const ss = useSelector((state: AppStateType) => state.boardsReducer.currentProjectIndx)
+    console.log(ss)
+
+
+    const arr = useSelector((state: AppStateType) => state.boardsReducer.projectArr)
+
+    useEffect(() => {
+
+        for (let i in arr) {
+            if (arr[i].id === ss.num) {
+                setbv(arr[i].boardArr)
+            }
+        }
+        console.log(arr, ss)
+    }, [arr])
+
+
+
+    const asyncDispatch = useAppDispatch()
 
 
     let activeId = useParams()
@@ -48,9 +70,10 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
 
 
+
     const onDragEnd = (result: any) => {
 
-        // debugger
+        debugger
 
         const { source, destination, draggableId } = result;
 
@@ -67,9 +90,9 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
 
 
-        const sourceColumn: BoardArrType = changeBoard.find((column) => column.id + '' === source.droppableId) as BoardArrType;
+        const sourceColumn: BoardArrType = bv?.find((column) => column.id + '' === source.droppableId) as BoardArrType;
 
-        const destinationColumn: BoardArrType = changeBoard.find((column) => column.id + '' === destination.droppableId) as BoardArrType;
+        const destinationColumn: BoardArrType = bv?.find((column) => column.id + '' === destination.droppableId) as BoardArrType;
 
 
         const newSourceCards: ItemsObjType[] = Array.from(sourceColumn?.items as ItemsObjType[])
@@ -89,7 +112,11 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                 items: newSourceCards,
             };
 
-            setChangeBoard(changeBoard.map(column => column.id === newColumn.id ? newColumn : column))
+            if (bv) {
+                setbv(bv.map(column => column.id === newColumn.id ? newColumn : column))
+
+            }
+
 
         } else {
 
@@ -110,12 +137,13 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                 items: newDestinationCards
             }
 
-
-            setChangeBoard(changeBoard.map(column => {
-                if (column.id === newSourceColumn.id) return newSourceColumn;
-                if (column.id === newDestinationColumn.id) return newDestinationColumn;
-                return column
-            }))
+            if (bv) {
+                setbv(bv.map(column => {
+                    if (column.id === newSourceColumn.id) return newSourceColumn;
+                    if (column.id === newDestinationColumn.id) return newDestinationColumn;
+                    return column
+                }))
+            }
         }
 
 
@@ -126,11 +154,17 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
 
     const changeCommentsFunc = (id: string, boardName: string) => {
-        changeBoard.map((val) => {
+
+        bv.map((val) => {
+
+            // val.boardArr.map((val1) => {
             if (val.boardName === boardName) {
+
                 val.items.map((val1) => {
+
                     if (val1.id === id) {
-                        setCommentsArr(val1.comments)
+                        debugger
+                        // setCommentsArr(val1.comments)
                         setCommentsItem(val1)
 
                         setCommentCurrentBoardName(boardName)
@@ -138,34 +172,49 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                     }
                 })
             }
+            // })
+
         })
 
     }
 
 
-    useEffect(() => {
-
-        // debugger
-        changeCommentsFunc(commentCurrentId, commentCurrentBoardName)
-
-    }, [changeBoard])
 
 
-    const addCardCompFunc = (boardName: string) => {
+
+    const addCardCompFunc = async (boardName: string) => {
         let cardCloneObj: ItemsObjType = {
             id: uuidv4(),
             boardName: boardName,
+            description: '',
             title: newCardVal,
             comments: []
         }
-        dispatch(addIssueFunc(cardCloneObj))
+        await asyncDispatch(addIssueAFunc(cardCloneObj))
+        await asyncDispatch(fetchPosts())
         setnewCardVal('')
     }
 
-    const addBoardCompFunc = () => {
-        dispatch(addBoardFunc(addBoardValnwName))
+    const addBoardCompFunc = async () => {
+
+
+        let newBoarObjClone: BoardArrType = {
+            id: bv.length,
+            title: addBoardValnwName,
+            boardName: addBoardValnwName.toLowerCase(),
+            items: []
+        }
+
+        await asyncDispatch(createBoard(newBoarObjClone))
+        await asyncDispatch(fetchPosts())
+
     }
 
+    const deleteBoardItemCompFunc = async (val: BoardArrType) => {
+        await asyncDispatch(deleteBoardItem({ val }))
+        await asyncDispatch(fetchPosts())
+
+    }
 
     return (
         <>
@@ -174,12 +223,13 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                 <div>
                     <div className={styles.boards_item_content}>
                         <div className={styles.boards_item_title}>
-                            {currentProject.boardName}
+                            {/* {currentProject.boardName} */}
                         </div>
                         <div className={styles.boards_item_content_container}>
 
                             {
-                                changeBoard.map((val, index) => {
+
+                                bv.map((val, index) => {
                                     return (
                                         <>
                                             <Droppable droppableId={`${val.id}`} key={val.id}>
@@ -229,6 +279,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                                                                                 <div onClick={() => setAddCardHktp(null)} >
                                                                                     <FaXmark />
                                                                                 </div>
+
                                                                             </div>
 
                                                                             :
@@ -242,6 +293,9 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                                                                             </div>
 
                                                                     }
+                                                                    <div onClick={() => deleteBoardItemCompFunc(val)}>
+                                                                        delete item boaard
+                                                                    </div>
 
                                                                 </div>
                                                             </div>
@@ -253,7 +307,6 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                                     )
                                 })
                             }
-
 
                             {
                                 addBoardValCnt
@@ -293,7 +346,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
             {
                 isShowModal
                     ?
-                    <IssueInfo commentCurrentBoardName={commentCurrentBoardName} commentsItem={commentsItem} setIsShowModal={setIsShowModal} commentsArr={commentsArr} />
+                    <IssueInfo commentCurrentId={commentCurrentId} commentCurrentBoardName={commentCurrentBoardName} commentsItem={commentsItem} setIsShowModal={setIsShowModal} commentsArr={commentsArr} />
                     :
                     null
             }
@@ -307,7 +360,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 export default BoardsItems
 
 interface OwnProps {
-    boardArr: Array<BoardArrType>,
+    boardArr: Array<BoardArrType> | null,
     setChangeBoard: (arr: Array<BoardArrType>) => void,
-    changeBoard: Array<BoardArrType>
+    changeBoard: Array<BoardArrType> | null
 }

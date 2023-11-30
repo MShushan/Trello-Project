@@ -1,15 +1,18 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { auth } from '../../../firebase'
 import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from 'firebase/auth'
 
 
 import styles from '../styles/SignIn.module.css'
+import { fetchUserInfo, userInfoFunc } from '../../../entities/UserR/UserReducer'
+import { useAppDispatch } from '../../../entities/Store/store'
 
 
 const SignIn: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
-    
 
+    const asyncDispatch = useAppDispatch()
 
     const authButtons = [
         {
@@ -53,6 +56,8 @@ const SignIn: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
             await signInWithPopup(auth, provider)
 
             localStorage.setItem('user', JSON.stringify(auth));
+            await asyncDispatch(userInfoFunc({ name: auth.currentUser?.displayName, email: auth.currentUser?.email, picture: auth.currentUser?.photoURL }))
+            await asyncDispatch(fetchUserInfo())
             setLocalStorageHook(true)
 
         } catch (err) {

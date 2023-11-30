@@ -1,14 +1,51 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './CommentsStl.module.css'
 import { ItemsInnerType, ItemsObjType, ProjectBoardArrType } from '../../../entities/BoardsR/BoardsReducerTs.interface'
-import { FaCheck, FaXmark } from 'react-icons/fa6'
-import { addCommentFunc, addCommentGlbFunc } from '../../../entities/BoardsR/BoardsReducer'
+import { FaAlipay, FaCheck, FaXmark } from 'react-icons/fa6'
+import { AppStateType, useAppDispatch } from '../../../entities/Store/store'
+import { addCommentFunc, addCommentGlbFunc, addDescription, fetchPosts, removeCommentFunc } from '../../../entities/BoardsR/BoardsReducer'
 
 
-const IssueInfo: React.FC<OwnProps> = ({ commentsArr, setIsShowModal, commentsItem, commentCurrentBoardName }) => {
+const IssueInfo: React.FC<OwnProps> = ({ commentCurrentId, setIsShowModal, commentsItem, commentCurrentBoardName }) => {
 
     const dispatch = useDispatch()
+    const asyncDispatch = useAppDispatch()
+
+    const [commentArr, setCommentArr] = useState<Array<ItemsInnerType>>([])
+    const arr = useSelector((state: AppStateType) => state.boardsReducer.projectArr)
+    const ss = useSelector((state: AppStateType) => state.boardsReducer.currentProjectIndx)
+
+    const [descriptionTxti, setDescriptionTxti] = useState<string>('')
+
+
+
+    useEffect(() => {
+
+        arr.map((val) => {
+            if (val.id === ss.num) {
+
+                // val.boardArr.map((val1) => {
+
+                val.boardArr.map((val2) => {
+
+                    val2.items.map((val1) => {
+
+                        if (val1.id === commentCurrentId) {
+
+                            setCommentArr(val1.comments)
+                            setDescriptionTxti(val1.description)
+                        }
+                    })
+
+                })
+
+
+                // })
+            }
+        })
+    }, [arr])
+
 
 
     const [commentText, setCommentText] = useState<string>('')
@@ -18,22 +55,58 @@ const IssueInfo: React.FC<OwnProps> = ({ commentsArr, setIsShowModal, commentsIt
     const [commentSecText, setCommentSecText] = useState<string>('')
 
 
-    const addCommentCompFunc = (val: ItemsInnerType, str: string) => {
-        dispatch(addCommentFunc({ val, str, commentsItem }))
+    const addCommentCompFunc = async (val: ItemsInnerType, str: string) => {
+        await asyncDispatch(addCommentFunc({ val, str, commentsItem }))
+        await asyncDispatch(fetchPosts())
+
     }
 
-    const addCommentSecCompFunc = (proj: string) => {
-        dispatch(addCommentGlbFunc({ item: commentsItem, proj, str: commentSecText }))
+    const addCommentSecCompFunc = async (proj: string) => {
+
+        await asyncDispatch(addCommentGlbFunc({ item: commentsItem, proj, str: commentSecText }))
+        await asyncDispatch(fetchPosts())
+
     }
 
+    const [addDescriptionTxt, setAddDescriptionTxt] = useState<string>('')
+
+    const addDescriptionFunc = async (str: string) => {
+
+
+
+        await asyncDispatch(addDescription({ item: commentsItem, str }))
+        await asyncDispatch(fetchPosts())
+
+    }
+
+    const removeCommentCompFunc = async (proj: string, id: number) => {
+        await asyncDispatch(removeCommentFunc({ item: commentsItem, proj, str: commentSecText, id }))
+        await asyncDispatch(fetchPosts())
+
+    }
 
     return (
         <div className={styles.comment_modal_part}>
+            <div >
+                Wiret description
+                <input type="text" onChange={(e) => setAddDescriptionTxt(e.target.value)} />
+                <button onClick={() => addDescriptionFunc(addDescriptionTxt)}>Add desctiption</button>
+            </div>
+            <div>
+                here is description
+                {
+                    descriptionTxti
+                }
+            </div>
+
             {
-                commentsArr.map((val) => {
+                commentArr.map((val) => {
                     return (
                         <div>
                             {val.title}
+                            <div onClick={() => removeCommentCompFunc(commentCurrentBoardName, val.id)}>
+                                <FaAlipay />
+                            </div>
                             <div style={{ paddingLeft: '3em' }}>
                                 {
                                     val.replied.map((val1) => {
@@ -111,6 +184,7 @@ interface OwnProps {
     commentsArr: Array<ItemsInnerType>,
     setIsShowModal: (val: boolean) => void,
     commentsItem: ItemsObjType | null,
-    commentCurrentBoardName: string
+    commentCurrentBoardName: string,
+    commentCurrentId: string
 
 }

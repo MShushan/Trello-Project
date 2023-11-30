@@ -4,8 +4,13 @@ import { FaPen, FaUnlockKeyhole, FaUser, FaXmark } from 'react-icons/fa6'
 import { Col, Row, Select } from 'antd'
 import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { addProjectFunc, getCurrentProjectIndexFunc } from '../../../entities/BoardsR/BoardsReducer'
-import { AppStateType } from '../../../entities/Store/store'
+import { addProjectFunc, fetchPosts, getCurrentProjectIndexFunc } from '../../../entities/BoardsR/BoardsReducer'
+import { AppStateType, useAppDispatch } from '../../../entities/Store/store'
+import { Firestore, collection, getDocs, onSnapshot } from 'firebase/firestore'
+import { db } from '../../../firebase'
+import { ProjectBoardArrType } from '../../../entities/BoardsR/BoardsReducerTs.interface'
+import { v4 as uuidv4 } from 'uuid';
+import { UserInfoType } from '../../../entities/UserR/UserReducer'
 
 
 
@@ -13,8 +18,24 @@ import { AppStateType } from '../../../entities/Store/store'
 const Boards: React.FC<OwnProps> = () => {
 
     const dispatch = useDispatch()
+    const asyncDispatch = useAppDispatch()
+
 
     const allProjectsArr = useSelector((state: AppStateType) => state.boardsReducer.projectArr)
+
+    const [allProjectsHkArr, setAllProjectsHkArr] = useState<Array<ProjectBoardArrType>>(allProjectsArr)
+
+
+    const userInfo = useSelector((state: AppStateType) => state.userReducer.userInfo)
+
+
+    useEffect(() => {
+
+        setAllProjectsHkArr(allProjectsArr)
+
+    }, [allProjectsArr])
+
+    console.log(allProjectsArr)
 
     const templateArr = [
         {
@@ -44,8 +65,40 @@ const Boards: React.FC<OwnProps> = () => {
     const [newProjectName, setNewProjectName] = useState<string>('')
 
 
-    const createNewProjectCompFunc = () => {
-        dispatch(addProjectFunc(newProjectName))
+    const createNewProjectCompFunc = async () => {
+        let newProjectInfoClone: ProjectBoardArrType = {
+            id: uuidv4(),
+            boardArr: [
+                {
+                    id: 0,
+                    title: 'To do',
+                    boardName: 'todo',
+                    items: []
+                },
+                {
+                    id: 1,
+                    title: 'Doing',
+                    boardName: 'doing',
+                    items: []
+
+                },
+                {
+                    id: 2,
+                    title: 'Done',
+                    boardName: 'done',
+                    items: []
+                },
+            ],
+            boardName: newProjectName
+        }
+        await asyncDispatch(addProjectFunc(newProjectInfoClone))
+        await asyncDispatch(fetchPosts())
+    }
+
+    const foo = async (num: string) => {
+
+        await asyncDispatch(getCurrentProjectIndexFunc({ num }))
+        await asyncDispatch(fetchPosts())
     }
 
 
@@ -57,12 +110,12 @@ const Boards: React.FC<OwnProps> = () => {
                 <div className={styles.boards_content_container}>
                     <div className={styles.boards_content_container_in_item_1}>
                         <div className={styles.boards_content_container_in_item_1_1_item}>
-                            <FaUser />
+                            <img src={`${userInfo.picture}`} />
                         </div>
                         <div className={styles.boards_content_container_in_item_1_2_item}>
                             <div className={styles.boards_content_container_in_item_1_2_item_1_item}>
                                 <div className={styles.boards_content_container_in_item_1_2_item_1_item_1_item}>
-                                    Shushanik Mirzoyan's workspace
+                                    {userInfo.name} {userInfo.email}
                                 </div>
                                 <div className={styles.boards_content_container_in_item_1_2_item_1_item_2_item}>
                                     <FaPen />
@@ -143,9 +196,10 @@ const Boards: React.FC<OwnProps> = () => {
                                 <div className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item_1_item}>
 
                                     {
-                                        allProjectsArr.map((val) => {
+                                        allProjectsHkArr.map((val: any) => {
+
                                             return (
-                                                <NavLink onClick={() => dispatch(getCurrentProjectIndexFunc(val.id))} to={`/currentBoard/${val.id}`} >
+                                                <NavLink onClick={() => foo(val.id)} to={`/currentBoard/${val.id}`} >
                                                     {val.boardName}
                                                 </NavLink>
                                             )

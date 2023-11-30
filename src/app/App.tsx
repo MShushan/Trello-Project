@@ -5,8 +5,9 @@ import './AppStl.css';
 import Header from '../pages/Header';
 import { useSelector } from 'react-redux'
 
-import { AppStateType } from '../entities/Store/store';
+import { AppStateType, useAppDispatch } from '../entities/Store/store';
 import { BoardArrType } from '../entities/BoardsR/BoardsReducerTs.interface';
+import { fetchPosts } from '../entities/BoardsR/BoardsReducer';
 
 
 const Registration = lazy(() => import("../pages/Register"))
@@ -18,10 +19,58 @@ const BoardsItems = lazy(() => import('../pages/BoardsItems'))
 
 function App() {
 
-    const currentBoardInd = useSelector((state: AppStateType) => state.boardsReducer.currentProjectIndx)
-    const boardArrComp = useSelector((state: AppStateType) => state.boardsReducer.projectArr[currentBoardInd].boardArr)
+    const asyncDispatch = useAppDispatch()
 
-    const [changeBoard, setChangeBoard] = useState<Array<BoardArrType>>(boardArrComp)
+    const currentBoardGlb = useSelector((state: AppStateType) => state.boardsReducer)
+    const loading = useSelector((state: AppStateType) => state.boardsReducer.loading)
+
+
+
+
+
+    const [currentBoardInd, setCurrentBoardInd] = useState<string>('')
+
+
+    // debugger
+
+    const [boardArrComp, setBoardArrComp] = useState<Array<BoardArrType> | null>(null)
+
+
+
+    useEffect(() => {
+        asyncDispatch(fetchPosts())
+
+    }, [asyncDispatch])
+
+
+    // useEffect(() => {
+
+    //     debugger
+
+    //     setCurrentBoardInd(currentBoardGlb.currentProjectIndx)
+
+
+    //     debugger
+    //     for (let i in currentBoardGlb.projectArr) {
+    //         debugger
+    //         if (currentBoardGlb.projectArr[i].id === currentBoardGlb.currentProjectIndx) {
+    //             setBoardArrComp(currentBoardGlb.projectArr[i].boardArr)
+    //         }
+    //     }
+
+    //     // if (!loading && currentBoardGlb.projectArr[currentBoardGlb.currentProjectIndx]) {
+    //     //     setBoardArrComp(currentBoardGlb.projectArr[currentBoardGlb.currentProjectIndx].boardArr)
+
+    //     // }
+
+
+
+    // }, [currentBoardGlb])
+
+
+
+
+    const [changeBoard, setChangeBoard] = useState<Array<BoardArrType> | null>(boardArrComp)
 
     console.log(changeBoard)
 

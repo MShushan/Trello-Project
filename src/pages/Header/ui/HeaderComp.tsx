@@ -7,10 +7,14 @@ import { NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { auth } from '../../../firebase';
 import { signOut } from 'firebase/auth';
 import Register from '../../Register';
+import { userInfoFunc } from '../../../entities/UserR/UserReducer';
+import { useAppDispatch } from '../../../entities/Store/store';
 
 
 const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
+
+    const asyncDispatch = useAppDispatch()
 
     const handleSignOut = () => {
 
@@ -19,6 +23,8 @@ const Header: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
                 localStorage.removeItem("user")
                 setLocalStorageHook(false)
+                asyncDispatch(userInfoFunc({ name: '', email: '', picture: '' }))
+
             })
             .catch(error => console.log(error))
     }

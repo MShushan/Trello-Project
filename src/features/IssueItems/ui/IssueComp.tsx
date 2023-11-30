@@ -4,20 +4,33 @@ import styles from './IssueCompStl.module.css'
 import { BoardArrType, ItemsInnerType, ItemsObjType } from '../../../entities/BoardsR/BoardsReducerTs.interface'
 import { Draggable } from 'react-beautiful-dnd'
 import { FaCheck, FaComment, FaPencil, FaXmark } from 'react-icons/fa6'
-import { changeIssueNameFunc } from '../../../entities/BoardsR/BoardsReducer'
+import { changeIssueNameAFunc, deleteIssue, fetchPosts } from '../../../entities/BoardsR/BoardsReducer'
+import { useAppDispatch } from '../../../entities/Store/store'
+// import { changeIssueNameFunc } from '../../../entities/BoardsR/BoardsReducer'
 
 
 const IssueComp: React.FC<OwnProps> = ({ val1, ind, changeCommentsFunc, setCuurentItem, setIsShowModal }) => {
 
+
     const dispatch = useDispatch()
+
+    const asyncDispatch = useAppDispatch()
 
 
     const [changedIssueNameCntTp, setChangedIssueNameCntTp] = useState<boolean>(false)
 
     const [changedIssueName, setChangedIssueName] = useState<string>('')
 
-    const changeIssueFunc = () => {
-        dispatch(changeIssueNameFunc({ val1, str: changedIssueName }))
+    const changeIssueFunc = async () => {
+        await asyncDispatch(changeIssueNameAFunc({ val1, str: changedIssueName }))
+        await asyncDispatch(fetchPosts())
+
+    }
+
+    const deleteIssueCompFunc = async (val1: ItemsObjType) => {
+        await asyncDispatch(deleteIssue({ issueInfo: val1 }))
+        await asyncDispatch(fetchPosts())
+
     }
 
 
@@ -39,6 +52,7 @@ const IssueComp: React.FC<OwnProps> = ({ val1, ind, changeCommentsFunc, setCuure
                                 </div>
                                 <div className={styles.boards_item_content_container_item_content_text}>
                                     <div onClick={() => {
+
                                         changeCommentsFunc(val1.id, val1.boardName)
                                         setIsShowModal(true)
                                         setCuurentItem(val1)
@@ -70,6 +84,9 @@ const IssueComp: React.FC<OwnProps> = ({ val1, ind, changeCommentsFunc, setCuure
                                             </div>
 
                                     }
+                                    <div onClick={() => deleteIssueCompFunc(val1)}>
+                                        delete
+                                    </div>
 
                                 </div>
                             </div>
