@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './CommentsStl.module.css'
 import { ItemsInnerType, ItemsObjType, ProjectBoardArrType } from '../../../entities/BoardsR/BoardsReducerTs.interface'
-import { FaAlipay, FaCheck, FaXmark } from 'react-icons/fa6'
+import { FaAlipay, FaCheck, FaDeleteLeft, FaXmark } from 'react-icons/fa6'
 import { AppStateType, useAppDispatch } from '../../../entities/Store/store'
 import { addCommentFunc, addCommentGlbFunc, addDescription, fetchPosts, removeCommentFunc } from '../../../entities/BoardsR/BoardsReducer'
 
@@ -87,93 +87,121 @@ const IssueInfo: React.FC<OwnProps> = ({ commentCurrentId, setIsShowModal, comme
 
     return (
         <div className={styles.comment_modal_part}>
-            <div >
-                Wiret description
-                <input type="text" onChange={(e) => setAddDescriptionTxt(e.target.value)} />
-                <button onClick={() => addDescriptionFunc(addDescriptionTxt)}>Add desctiption</button>
+            <div className={styles.comment_modal_part_title}>
+                {commentsItem?.title}
             </div>
-            <div>
-                here is description
+            <div className={styles.comment_modal_part_1_item}>
+                <div className={styles.comment_modal_part_1_item_1_item}>
+                    Please write description
+                </div>
+                <div className={styles.comment_modal_part_1_item_2_item}>
+                    <input type="text" onChange={(e) => setAddDescriptionTxt(e.target.value)} />
+                </div>
+                <div className={styles.comment_modal_part_1_item_3_item}>
+                    <button onClick={() => addDescriptionFunc(addDescriptionTxt)}>Add desctiption</button>
+                </div>
+            </div>
+            <div className={styles.comment_modal_part_2_item}>
+                <div className={styles.comment_modal_part_2_item_1_item}>
+                    Here is description
+                </div>
+                <div className={styles.comment_modal_part_2_item_2_item}>
+                    {
+                        descriptionTxti
+                    }
+                </div>
+            </div>
+
+            <div className={styles.comment_modal_part_3_item}>
+
                 {
-                    descriptionTxti
+                    commentArr.map((val) => {
+                        return (
+                            <div className={styles.comment_modal_part_3_item_comment_txt_stl}>
+                                <div className={styles.comment_modal_part_3_item_comment_txt_stl_eqs}>
+                                    <div className={styles.comment_modal_part_3_item_comment_txt_stl_item}>
+                                        {val.title}
+                                    </div>
+
+
+                                    <div onClick={() => removeCommentCompFunc(commentCurrentBoardName, val.id)} className={styles.comment_modal_part_3_item_comment_txt_stl_item_2_item}>
+                                        <FaDeleteLeft />
+                                    </div>
+                                </div>
+
+                                <div className={styles.comment_modal_part_3_item_comment_txt_stl_item_4_item}>
+
+                                    <div className={styles.comment_modal_part_3_item_comment_txt_stl_item_3_item_replied_comment}>
+                                        {
+                                            val.replied.map((val1) => {
+                                                return (
+                                                    <div className={styles.comment_modal_part_3_item_comment_txt_stl_item_3_item_replied_comment_item}>
+                                                        {val1.text}
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                    {
+                                        val.id === commentTextContTp
+                                            ?
+                                            <div className={styles.comment_modal_part_3_item_comment_item}>
+                                                <input className={styles.comment_modal_part_3_item_comment_item_1_item} type='text' onChange={(e) => setCommentText(e.target.value)} />
+                                                <div className={styles.comment_modal_part_4_item_1_item_1_item}>
+                                                    <div onClick={() => {
+                                                        setCommentTextContTp(null)
+                                                        addCommentCompFunc(val, commentText)
+                                                    }} className={styles.comment_modal_part_3_item_comment_item_2_item}>
+                                                        <FaCheck />
+                                                    </div>
+                                                    <div onClick={() => setCommentTextContTp(null)} className={styles.comment_modal_part_3_item_comment_item_2_item}>
+                                                        <FaXmark />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            :
+                                            <div onClick={() => setCommentTextContTp(val.id)} className={styles.boards_item_content_container_2_item}>
+                                                Reply
+                                            </div>
+                                    }
+
+                                </div>
+                            </div>
+                        )
+                    })
                 }
             </div>
 
-            {
-                commentArr.map((val) => {
-                    return (
-                        <div>
-                            {val.title}
-                            <div onClick={() => removeCommentCompFunc(commentCurrentBoardName, val.id)}>
-                                <FaAlipay />
-                            </div>
-                            <div style={{ paddingLeft: '3em' }}>
-                                {
-                                    val.replied.map((val1) => {
-                                        return (
-                                            <div>
-                                                {val1.text}
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-                            <div>
 
-                                {
-                                    val.id === commentTextContTp
-                                        ?
-                                        <div>
-                                            <input type='text' onChange={(e) => setCommentText(e.target.value)} />
-                                            <div>
-                                            </div>
-                                            <div onClick={() => {
-                                                setCommentTextContTp(null)
-                                                addCommentCompFunc(val, commentText)
-                                            }} >
-                                                <FaCheck />
-                                            </div>
-                                            <div onClick={() => setCommentTextContTp(null)} >
-                                                <FaXmark />
-                                            </div>
-                                        </div>
-                                        :
-                                        <div onClick={() => setCommentTextContTp(val.id)} className={styles.boards_item_content_container_2_item}>
-                                            ___ replie comment
-                                        </div>
-                                }
-
-                            </div>
-                        </div>
-                    )
-                })
-            }
-
-
-            <div>
+            <div className={styles.comment_modal_part_4_item}>
                 {
                     addGlbComment
                         ?
-                        <div>
-                            <input type='text' onChange={(e) => setCommentSecText(e.target.value)} />
-                            <div onClick={() => {
-                                addCommentSecCompFunc(commentCurrentBoardName)
-                                setAddGlbComment(true)
-                            }}>
-                                <FaCheck />
-                            </div>
-                            <div onClick={() => setAddGlbComment(false)}>
-                                <FaXmark />
+                        <div className={styles.comment_modal_part_4_item_1_item}>
+                            <input placeholder='Please write your comment' className={styles.comment_modal_part_4_item_2_item} type='text' onChange={(e) => setCommentSecText(e.target.value)} />
+                            <div className={styles.comment_modal_part_4_item_1_item_1_item}>
+                                <div onClick={() => {
+                                    addCommentSecCompFunc(commentCurrentBoardName)
+                                    setAddGlbComment(true)
+                                }}
+
+                                    className={styles.comment_modal_part_4_item_3_item}
+                                >
+                                    <FaCheck />
+                                </div>
+                                <div onClick={() => setAddGlbComment(false)} className={styles.comment_modal_part_4_item_3_item}>
+                                    <FaXmark />
+                                </div>
                             </div>
                         </div>
                         :
-                        <div onClick={() => setAddGlbComment(true)}>
+                        <div onClick={() => setAddGlbComment(true)} className={styles.comment_modal_part_4_item_1_item_1_item_ovrl}>
                             Add comment
                         </div>
                 }
             </div>
 
-            <button onClick={() => setIsShowModal(false)}>Close</button>
+            <div className={styles.comment_modal_part_5_item} onClick={() => setIsShowModal(false)}><FaXmark /></div>
         </div>
     )
 }

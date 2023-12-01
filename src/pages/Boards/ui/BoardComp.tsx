@@ -137,24 +137,7 @@ const Boards: React.FC<OwnProps> = () => {
                         </Row>
                         <div className={styles.boards_content_container_in_item_2_2_item}>
                             <div className={styles.boards_content_container_in_item_2_2_item_1_item}>
-                                Get going faster with a template from the Trello community or
-                            </div>
-                            <div className={styles.boards_content_container_in_item_2_2_item_2_item}>
-                                <Select
-                                    labelInValue
-                                    defaultValue={{ value: 'lucy', label: 'Lucy (101)' }}
-                                    style={{ width: 120 }}
-                                    options={[
-                                        {
-                                            value: 'jack',
-                                            label: 'Jack (100)',
-                                        },
-                                        {
-                                            value: 'lucy',
-                                            label: 'Lucy (101)',
-                                        },
-                                    ]}
-                                />
+                                Get going faster with a template from the Trello community
                             </div>
                         </div>
                         <div className={styles.boards_content_container_in_item_2_3_item}>
@@ -200,7 +183,9 @@ const Boards: React.FC<OwnProps> = () => {
 
                                             return (
                                                 <NavLink onClick={() => foo(val.id)} to={`/currentBoard/${val.id}`} >
-                                                    {val.boardName}
+                                                    <div className={styles.boards_content_container_in_item_2_4_item_1_item_1_0_item_1_item_1_item}>
+                                                        {val.boardName}
+                                                    </div>
                                                 </NavLink>
                                             )
                                         })
@@ -220,18 +205,21 @@ const Boards: React.FC<OwnProps> = () => {
             {
                 newProjectModal
                     ?
-                    <div>
-                        <div onClick={() => setNewProjectModal(false)}>
-                            Close
+                    <div className={styles.board_modal}>
+                        <div className={styles.board_modal_1_item} onClick={() => setNewProjectModal(false)}>
+                            <FaXmark />
                         </div>
+
+                        <input className={styles.board_modal_3_item} onChange={(e) => setNewProjectName(e.target.value)} />
                         <div onClick={() => {
                             setNewProjectModal(false)
                             createNewProjectCompFunc()
                         }
-                        }>
+
+                        }
+                            className={styles.board_modal_2_item}>
                             Create
                         </div>
-                        <input onChange={(e) => setNewProjectName(e.target.value)} />
                     </div>
                     :
                     null

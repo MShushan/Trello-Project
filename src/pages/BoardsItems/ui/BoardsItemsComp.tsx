@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styles from '../styles/index.module.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { FaCheck, FaComment, FaPencil, FaPlus, FaXmark } from 'react-icons/fa6'
+import { FaCheck, FaComment, FaDeleteLeft, FaPencil, FaPlus, FaXmark } from 'react-icons/fa6'
 // import { BoardArrType, ItemsInnerType, ItemsObjType } from 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,6 +20,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
     const ss = useSelector((state: AppStateType) => state.boardsReducer.currentProjectIndx)
     console.log(ss)
+
 
 
     const arr = useSelector((state: AppStateType) => state.boardsReducer.projectArr)
@@ -293,8 +294,8 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                                                                             </div>
 
                                                                     }
-                                                                    <div onClick={() => deleteBoardItemCompFunc(val)}>
-                                                                        delete item boaard
+                                                                    <div onClick={() => deleteBoardItemCompFunc(val)} className={styles.boards_item_content_delete_board}>
+                                                                        Delete
                                                                     </div>
 
                                                                 </div>
@@ -311,21 +312,25 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
                             {
                                 addBoardValCnt
                                     ?
-                                    <div>
-                                        <input type='text' onChange={(e) => setAddBoardValnwName(e.target.value)} />
-                                        <div>
+                                    <div className={styles.comment_modal_part_4_item_1_item}>
+                                        <input className={styles.comment_modal_part_4_item_2_item} type='text' onChange={(e) => setAddBoardValnwName(e.target.value)} />
+
+
+                                        <div className={styles.comment_modal_part_4_item_1_item_1_item}>
+                                            <div onClick={() => {
+                                                // setAddCardHktp(null)
+                                                // addCardCompFunc(val.boardName)
+                                                setAddBoardValCnt(false)
+                                                addBoardCompFunc()
+                                            }}
+                                                className={styles.comment_modal_part_4_item_3_item}>
+                                                <FaCheck />
+                                            </div>
+                                            <div onClick={() => setAddBoardValCnt(false)} className={styles.comment_modal_part_4_item_3_item}>
+                                                <FaXmark />
+                                            </div>
                                         </div>
-                                        <div onClick={() => {
-                                            // setAddCardHktp(null)
-                                            // addCardCompFunc(val.boardName)
-                                            setAddBoardValCnt(false)
-                                            addBoardCompFunc()
-                                        }} >
-                                            <FaCheck />
-                                        </div>
-                                        <div onClick={() => setAddBoardValCnt(false)} >
-                                            <FaXmark />
-                                        </div>
+
                                     </div>
                                     :
                                     <div onClick={() => setAddBoardValCnt(true)} className={styles.boards_item_content_container_2_item}>
@@ -341,7 +346,7 @@ const BoardsItems: React.FC<OwnProps> = ({ boardArr, setChangeBoard, changeBoard
 
                     </div>
                 </div>
-            </DragDropContext>
+            </DragDropContext >
 
             {
                 isShowModal

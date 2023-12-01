@@ -1,7 +1,8 @@
 .boards_item_content {
     width: 70%;
     margin: 0 auto;
-    padding-top: 3em;
+    padding: 3em;
+    overflow: scroll;
 }
 
 .boards_item_title {
@@ -18,13 +19,13 @@
 }
 
 .boards_item_content_container_overlay {
-    width: 25%;
+    /* width: 25%; */
 }
 
 .boards_item_content_container_1_item {
-    background-color: #ffd7ba;
+    background-color: #90e0ef;
     padding: 1em;
-    /* width: 25%; */
+    width: 300px;
     margin: 0 1em;
 }
 
@@ -45,4 +46,83 @@
 .boards_item_content_container_1_item_2_item_2_item,
 .boards_item_content_container_2_item {
     font-family: 'Oxygen', sans-serif;
+}
+
+
+.boards_item_content_container_2_item {
+    background-color: #03045e;
+    border: 2px solid #03045e;
+    display: flex;
+    color: white;
+    cursor: pointer;
+    padding: 2em;
+    transition: .3s ease-in-out;
+}
+
+.boards_item_content_container_2_item:hover {
+    background-color: transparent;
+    color: #03045e;
+}
+
+.comment_modal_part_4_item_1_item_1_item {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.comment_modal_part_4_item_3_item {
+    background-color: transparent;
+    padding: .5em;
+    border: 2px solid #03045e;
+    cursor: pointer;
+    color: #03045e;
+    transition: .3s ease-in-out;
+}
+
+.comment_modal_part_4_item_3_item:hover {
+    background-color: #03045e;
+    color: white;
+}
+
+.comment_modal_part_4_item_1_item_1_item_ovrl {
+    padding: 1em;
+    background-color: #caf0f8;
+    width: 20%;
+    font-family: 'Oxygen', sans-serif;
+    color: #03045e;
+    text-align: center;
+    cursor: pointer;
+    transition: .3s ease-in-out;
+}
+
+.comment_modal_part_4_item_1_item_1_item_ovrl:hover {
+    background-color: #03045e;
+    color: #caf0f8;
+}
+
+
+.comment_modal_part_4_item_1_item {
+    background-color: #caf0f8;
+    width: 30%;
+    padding: 1em;
+}
+
+.comment_modal_part_4_item_2_item {
+    font-family: 'Oxygen', sans-serif;
+    padding: .5em;
+    outline: none;
+}
+
+.boards_item_content_delete_board {
+    font-family: 'Oxygen', sans-serif;
+    cursor: pointer;
+    padding: .5em;
+    background-color: #e63946;
+    border: 2px solid #e63946;
+    color: white;
+    transition: .3s ease-in-out;
+}
+
+.boards_item_content_delete_board:hover {
+    background-color: white;
+    color: #e63946;
 }

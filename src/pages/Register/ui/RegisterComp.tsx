@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../styles/index.module.css'
 import { Input, Button } from 'antd'
 
@@ -7,8 +7,45 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { FaTrello, FaAtlassian, FaCircle } from "react-icons/fa6";
 
 import SignIn from '../../SignIn';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../firebase';
+import { useAppDispatch } from '../../../entities/Store/store';
+import { userInfoFunc } from '../../../entities/UserR/UserReducer';
 
 const Register: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
+
+    const [emailtxt, setEmailtxt] = useState<string>('')
+    const [passwordtxt, setPasswordtxt] = useState<string>('')
+
+
+    const asyncDispatch = useAppDispatch()
+
+
+    const loginEmailPassword = () => {
+
+
+
+        signInWithEmailAndPassword(auth, emailtxt, passwordtxt)
+            .then((userCredential) => {
+
+
+                localStorage.setItem('user', JSON.stringify(userCredential.user));
+                setLocalStorageHook(true)
+
+                asyncDispatch(userInfoFunc({
+                    name: null,
+                    email: userCredential.user.email,
+                    picture: null
+                }))
+
+            })
+
+            .catch((error) => {
+
+                // setErrorMessage(error.message)
+            })
+
+    }
 
     return (
         <div className={styles.register_bg}>
@@ -36,10 +73,10 @@ const Register: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
                 <div className={styles.register_content_3_item}>
                     <div className={styles.register_content_3_item_1_item}>
-                        <Input placeholder="Please Write Your Email" />
+                        <Input onChange={(e) => setEmailtxt(e.target.value)} placeholder="Please Write Your Email" />
                     </div>
                     <div className={styles.register_content_3_item_1_item}>
-                        <Input placeholder="Please Write Your Password" />
+                        <Input onChange={(e) => setPasswordtxt(e.target.value)} placeholder="Please Write Your Password" />
                     </div>
                 </div>
 
@@ -47,7 +84,7 @@ const Register: React.FC<OwnProps> = ({ setLocalStorageHook }) => {
 
 
                 <div className={styles.register_content_4_item}>
-                    <Button type="primary">Log in</Button>
+                    <Button onClick={loginEmailPassword} type="primary" >Log in</Button>
                 </div>
 
                 <SignIn setLocalStorageHook={setLocalStorageHook} />
